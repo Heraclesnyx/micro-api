@@ -1,0 +1,15 @@
+.git/
+.venv/
+__pycache__/
+.pytest_cache/
+.vscode/
+.env
+tests/
+pytest.ini
+requirements-dev.txt
+.github/
+README.md
+test_manuel.py
+Dockerfile
+.dockerignore
+.gitignore
