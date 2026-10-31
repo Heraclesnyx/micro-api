@@ -13,3 +13,4 @@ test_manuel.py
 Dockerfile
 .dockerignore
 .gitignore
+check_db.py
