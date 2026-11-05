@@ -1,13 +1,24 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from db import get_db
-from models import Task
+from db import get_db, engine
+from models import Task, Base
 
 
-app = FastAPI()   # l'application, c'est l'objet qu'uvicorn charge (main:app)
+
+# Définit les actions a effectuer au démarrage et l'arrêt de l'application
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+
+    # Création de la base de données définie dans le fichier db.py si elles n'existent pas.
+    Base.metadata.create_all(bind=engine)
+    yield
+
+app = FastAPI(lifespan=lifespan)   # l'application, c'est l'objet qu'uvicorn charge (main:app)
 
 class TaskCreate(BaseModel):
     title: str
