@@ -3,7 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI, HTTPException, Depends
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, StringConstraints
+from typing import Annotated
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -29,8 +30,10 @@ app.add_middleware(
     allow_headers=["Content-Type"],
 )
 
+
+TaskTitle = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 class TaskCreate(BaseModel):
-    title: str
+    title: TaskTitle
 
 
 class TaskUpdate(BaseModel):
