@@ -94,6 +94,18 @@ def test_put_task_with_valid_id_updates_task():
     }
 
 
+def test_put_task_with_empty_title_returns_422():
+
+    created_task =client.post("/tasks", json={"title": "Ma première tâche"})
+    task_id = created_task.json()["id"]
+
+    response = client.put(f"/tasks/{task_id}", json={"title": "", "done": False})
+    assert response.status_code == 422
+
+
+
+
+
 def test_put_task_with_unknown_id_returns_404():
     response = client.put("/tasks/99", json={"title": "Ma deuxième tâche", "done": False})
     assert response.status_code == 404

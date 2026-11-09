@@ -37,7 +37,7 @@ class TaskCreate(BaseModel):
 
 
 class TaskUpdate(BaseModel):
-    title: str
+    title: TaskTitle
     done: bool
 
 class TaskRead(BaseModel):
