@@ -69,8 +69,41 @@ function displayTasks(tasks) {
   tasks.forEach((task) => {
     const li = document.createElement("li");
     li.textContent = task.title;
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Supprimer";
+
+    deleteButton.addEventListener("click", () => deleteTask(task.id));
+
+    li.appendChild(deleteButton);
     ul.appendChild(li);
   });
+}
+
+function deleteTask(taskId) {
+  const message = document.getElementById("message");
+  fetch(`${API_URL}/tasks/${taskId}`, {
+    method: "DELETE",
+  })
+    .then((response) => {
+      if (!response.ok) {
+        const error = new Error(`Erreur HTTP : ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
+      message.textContent = "";
+      loadTasks();
+    })
+    .catch((error) => {
+      console.error(error);
+      if (error.status === 404) {
+        loadTasks().then(() => {
+          message.textContent = "Cette tâche n'existe plus.";
+        });
+      } else {
+        message.textContent =
+          "Impossible de supprimer la tâche. Vérifie que l'API est disponible.";
+      }
+    });
 }
 
 document.getElementById("add-task").addEventListener("click", addTask);
