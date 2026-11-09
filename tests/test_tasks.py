@@ -1,7 +1,4 @@
 from fastapi.testclient import TestClient
-import pytest
-
-import main
 from main import app
 
 client = TestClient(app)
@@ -27,6 +24,22 @@ def test_post_task_with_valid_title_returns_201():
 def test_post_task_without_title_returns_422():
     response = client.post("/tasks", json={})
     assert response.status_code == 422
+
+
+def test_post_task_with_whitespace_title_returns_422():
+    response = client.post("/tasks", json={"title": "   "})
+    assert response.status_code == 422
+
+
+def test_post_task_with_trim_surrounding_whitespace():
+    response = client.post("/tasks", json={"title": "   Hello   "})
+    assert response.status_code == 201
+    assert response.json()["title"] == "Hello"
+
+
+
+
+
 
 def test_get_tasks_returns_empty_list():
     response = client.get("/tasks")
@@ -102,6 +115,6 @@ def test_delete_task_with_valid_id_return_204():
     assert response.status_code == 404
 
 
-def test_delete_task_with_unknown_id_returns_404(db_session):
+def test_delete_task_with_unknown_id_returns_404():
     response = client.delete("/tasks/99")
     assert response.status_code == 404
