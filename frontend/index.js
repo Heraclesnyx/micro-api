@@ -68,7 +68,24 @@ function displayTasks(tasks) {
 
   tasks.forEach((task) => {
     const li = document.createElement("li");
-    li.textContent = task.title;
+    const title = document.createElement("span");
+    const checkbox = document.createElement("input");
+
+    title.textContent = task.title;
+    if (task.done) {
+      title.style.textDecoration = "line-through";
+    }
+
+    checkbox.type = "checkbox";
+    checkbox.checked = task.done;
+
+    checkbox.addEventListener("change", () =>
+      updateTask(task.id, task.title, checkbox.checked, checkbox),
+    );
+
+    li.appendChild(checkbox);
+    li.appendChild(title);
+
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Supprimer";
 
@@ -103,6 +120,38 @@ function deleteTask(taskId) {
         message.textContent =
           "Impossible de supprimer la tâche. Vérifie que l'API est disponible.";
       }
+    });
+}
+
+function updateTask(taskId, title, done, checkbox) {
+  const message = document.getElementById("message");
+  fetch(`${API_URL}/tasks/${taskId}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title, done }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        const error = new Error(`Erreur HTTP : ${response.status}`);
+        error.status = response.status;
+        throw error;
+      }
+      message.textContent = "";
+      loadTasks();
+    })
+    .catch((error) => {
+      console.error(error);
+      checkbox.checked = !done;
+      loadTasks().then(() => {
+        if (error.status === 404) {
+          message.textContent = "Cette tâche n'existe plus.";
+        } else {
+          message.textContent =
+            "Impossible de mettre à jour la tâche. Vérifie que l'API est disponible.";
+        }
+      });
     });
 }
 
