@@ -141,3 +141,5 @@ La publication de l'image ne s'exécute jamais sur un pull request : elle est r�
 - Mettre en place un système d'authentification.
 - Externaliser la configuration CORS plutôt que de conserver l'origine dans le code.
 - Étudier le déploiement de l'application sur Microsoft Azure.
+
+<!-- Test de la protection de la branche main -->
